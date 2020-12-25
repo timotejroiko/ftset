@@ -1,7 +1,7 @@
 {
   "name": "stringbase",
   "version": "1.0.0",
-  "description": "A string-based array-like data structure designed for ultra fast full-text searching",
+  "description": "An array-like data structure designed for ultra fast full-text searching",
   "main": "index.js",
   "typings": "./index.d.ts",
   "scripts": {
