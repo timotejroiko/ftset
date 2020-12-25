@@ -1,10 +1,11 @@
 {
   "name": "stringbase",
   "version": "1.0.0",
-  "description": "An array-like data structure designed for ultra fast full-text searching and low memory usage",
+  "description": "A string-based array-like data structure designed for ultra fast full-text searching",
   "main": "index.js",
+  "typings": "./index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node bench/bench.js"
   },
   "keywords": [
     "stringbase",
@@ -22,5 +23,12 @@
     "regex"
   ],
   "author": "Timotej Valentin Rojko",
-  "license": "MIT"
+  "funding": {
+		"type": "patreon",
+		"url": "https://patreon.com/timotejroiko"
+	},
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^7.16.0"
+  }
 }
