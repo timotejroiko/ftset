@@ -1,4 +1,4 @@
-# Stringbase
+# Stringbase (temp name)
 
 Stringbase is an array-like data structure comparable to the javascript `Set` object but designed exclusively for storing strings and providing ultra fast full-text queries.
 
