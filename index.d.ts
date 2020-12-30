@@ -1,4 +1,4 @@
-declare module 'stringbase' {
+declare module 'ftset' {
 
     /**
      * ## Cursor
@@ -31,40 +31,40 @@ declare module 'stringbase' {
     }
 
     /**
-     * ## Stringbase
+     * ## FTSet
      * ### A string-based datastore designed for ultra fast full-text queries.
      * @class
      * @example
-     * const Stringbase = require("stringbase");
-     * const sb = new Stringbase();
-     * sb.push("some data");
-     * sb.push("ex dee");
-     * sb.concat(["abc efg hij", "XYZ", "uvuvwevwevwe"]);
-     * console.log(sb.find("dee")); // "ex dee";
-     * console.log(sb.matchAll(/x/i)) // ["ex dee", "XYZ"];
-     * for(let item of sb) {
+     * const FTSet = require("FTSet");
+     * const fts = new FTSet();
+     * fts.push("some data");
+     * fts.push("ex dee");
+     * fts.concat(["abc efg hij", "XYZ", "uvuvwevwevwe"]);
+     * console.log(fts.find("dee")); // "ex dee";
+     * console.log(fts.matchAll(/x/i)) // ["ex dee", "XYZ"];
+     * for(let item of fts) {
      *     console.log(item) // "some data", "ex dee", ...
      * }
-     * sb.clear();
+     * fts.clear();
      */
-    export class Stringbase implements Iterable<string> {
+    export class FTSet implements Iterable<string> {
         [Symbol.iterator](): Iterator<string>;
 
         /**
-         * ### new Stringbase(data, delimiter) => Stringbase
-         * Create an instance of Stringbase.
+         * ### new FTSet(data, delimiter) => FTSet
+         * Create an instance of FTSet.
          * @param {(string | string[])} [data=""] Data to initialize the instance with. Defaults to empty string.
          * @param {string} [delimiter="\u0004"] A string to act as the delimiter. Defaults to the EOT character "\u0004".
-         * @returns {Stringbase} An instance of Stringbase.
+         * @returns {FTSet} An instance of FTSet.
          * @example
          * // create an empty instance
-         * const sb = new Stringbase()
+         * const fts = new FTSet()
          * 
          * // create an instance from a delimited string
-         * const sb = new Stringbase("item1,item2,item3", ",")
+         * const fts = new FTSet("item1,item2,item3", ",")
          * 
          * // create an instance from an array or an iterable
-         * const sb = new Stringbase(["item1","item2","item3"])
+         * const fts = new FTSet(["item1","item2","item3"])
          */
         constructor(data?: string | string[], delimiter?: string);
         private _data: string;
@@ -194,13 +194,20 @@ declare module 'stringbase' {
         shift(): string;
 
         /**
-         * ### .concat(data) => Stringbase
+         * ### .concat(data) => FTSet
          * Inserts a number of items at the end of the dataset.  
          * Returns the current instance.
-         * @param {(string | string[])} data The data to insert. Can be a string, array of strings, iterable or instance of Stringbase
+         * @param {(string | string[])} data The data to insert. Can be a string, array of strings, iterable or instance of FTSet
          * @returns {number} The current instance.
          */
-        concat(data: string | string[]): Stringbase;
+        concat(data: string | string[]): FTSet;
+
+        /**
+         * ### .clone(data) => FTSet
+         * Returns a new instance of FTSet containing a full copy of the entire dataset.  
+         * @returns {number} A new instance of FTSet.
+         */
+        clone(): FTSet;
 
         /**
          * ### .forEach(callback) => Void
@@ -210,12 +217,12 @@ declare module 'stringbase' {
         forEach(callback: (item: string) => void): void;
 
         /**
-         * ### .map(callback) => Stringbase
+         * ### .map(callback) => FTSet
          * Loops over all items in the dataset and executes a callback function on each item.  
-         * Returns a new instance of Stringbase containing the results.
+         * Returns a new instance of FTSet containing the results.
          * @param {function} callback A function to execute on each item.
          */
-        map(callback: (item: string) => void): Stringbase;
+        map(callback: (item: string) => void): FTSet;
 
         /**
          * ### .cursor(query) => { current, previous, next }
@@ -225,7 +232,7 @@ declare module 'stringbase' {
          * @param {string} query Optional query to define the initial cursor location.
          * @returns {Cursor} A Cursor object.
          * @example
-         * let data = new Stringbase(["a","b","c","d"]);
+         * let data = new FTSet(["a","b","c","d"]);
          * let cursor = data.cursor("b");
          * cursor.next() // "c"
          * cursor.next() // "d"

@@ -2,7 +2,7 @@
 "use strict";
 
 const p = require("perf_hooks").performance;
-const Stringbase = require(`${__dirname}/../index.js`);
+const FTSet = require(`${__dirname}/../index.js`);
 
 function time(fn, str) {
 	const t = p.now();
@@ -33,7 +33,7 @@ const tests = [
 for(const test of tests) {
 	const array = [];
 	const set = new Set();
-	const sb = new Stringbase();
+	const sb = new FTSet();
 	let z;
 	// /////////////////////
 	time(() => {
@@ -52,7 +52,7 @@ for(const test of tests) {
 		for(let i = 0; i < test.items; i++) {
 			sb.push(randomStr(test.size));
 		}
-	}, `[stringbase] pushed ${test.items} strings of ${test.size} chars`);
+	}, `[ftset] pushed ${test.items} strings of ${test.size} chars`);
 	// /////////////////////
 	array.find(x => x.includes("abc")); // dry runs
 	sb.find("abc"); // dry runs
@@ -65,7 +65,7 @@ for(const test of tests) {
 	z = sb.first();
 	time(() => {
 		sb.find(z);
-	}, "[stringbase] found first item");
+	}, "[ftset] found first item");
 	// /////////////////////
 	z = array[array.length - 1];
 	time(() => {
@@ -75,7 +75,7 @@ for(const test of tests) {
 	z = sb.last();
 	time(() => {
 		sb.find(z);
-	}, "[stringbase] found last item");
+	}, "[ftset] found last item");
 	// /////////////////////
 	time(() => {
 		array[Math.floor(Math.random() * array.length)];
@@ -87,7 +87,7 @@ for(const test of tests) {
 	// /////////////////////
 	time(() => {
 		sb.random();
-	}, "[stringbase] picked a random item");
+	}, "[ftset] picked a random item");
 	// /////////////////////
 	z = array[Math.floor(Math.random() * array.length)];
 	time(() => {
@@ -102,7 +102,7 @@ for(const test of tests) {
 	z = sb.random();
 	time(() => {
 		sb.delete(z);
-	}, "[stringbase] deleted an item");
+	}, "[ftset] deleted an item");
 	// /////////////////////
 	time(() => {
 		for(let i = 0; i < test.items - 1; i++) {
@@ -114,7 +114,7 @@ for(const test of tests) {
 		for(let i = 0; i < test.items - 1; i++) {
 			sb.pop();
 		}
-	}, `[stringbase] popped ${test.items - 1} items`);
+	}, `[ftset] popped ${test.items - 1} items`);
 	// /////////////////////
 	time(() => {
 		for(let i = 0; i < test.items; i++) {
@@ -126,7 +126,7 @@ for(const test of tests) {
 		for(let i = 0; i < test.items; i++) {
 			sb.unshift(randomStr(test.size));
 		}
-	}, `[stringbase] unshifted ${test.items} strings of ${test.size} chars`);
+	}, `[ftset] unshifted ${test.items} strings of ${test.size} chars`);
 	// /////////////////////
 	array.filter(x => x.includes("abc") > -1); // dry runs
 	sb.findAll("abc"); // dry runs
@@ -137,7 +137,7 @@ for(const test of tests) {
 	// /////////////////////
 	time(() => {
 		sb.findAll("abc");
-	}, "[stringbase] filtered for items containing \"abc\"");
+	}, "[ftset] filtered for items containing \"abc\"");
 	// /////////////////////
 	time(() => {
 		array.filter(x => x.match(/abc/i));
@@ -145,7 +145,7 @@ for(const test of tests) {
 	// /////////////////////
 	time(() => {
 		sb.matchAll(/abc/i);
-	}, "[stringbase] regex filtered for items containing /abc/i");
+	}, "[ftset] regex filtered for items containing /abc/i");
 	// /////////////////////
 	time(() => {
 		for(const i of array) { i[0]; }
@@ -157,7 +157,7 @@ for(const test of tests) {
 	// /////////////////////
 	time(() => {
 		for(const i of sb) { i[0]; }
-	}, "[stringbase] iterated using for...of");
+	}, "[ftset] iterated using for...of");
 	// /////////////////////
 	time(() => {
 		array.forEach(x => x[0]);
@@ -169,7 +169,7 @@ for(const test of tests) {
 	// /////////////////////
 	time(() => {
 		sb.forEach(x => x[0]);
-	}, "[stringbase] iterated using forEach");
+	}, "[ftset] iterated using forEach");
 	// /////////////////////
 	time(() => {
 		array.map(x => x[0]);
@@ -177,7 +177,7 @@ for(const test of tests) {
 	// /////////////////////
 	time(() => {
 		sb.map(x => x[0]);
-	}, "[stringbase] iterated using map");
+	}, "[ftset] iterated using map");
 	// /////////////////////
 	time(() => {
 		for(let i = 0; i < test.items; i++) {
@@ -189,6 +189,6 @@ for(const test of tests) {
 		for(let i = 0; i < test.items; i++) {
 			sb.shift();
 		}
-	}, `[stringbase] shifted ${test.items} items`);
+	}, `[ftset] shifted ${test.items} items`);
 	console.log("\n");
 }

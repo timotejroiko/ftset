@@ -1,18 +1,19 @@
 {
-  "name": "stringbase",
+  "name": "ftset",
   "version": "1.0.0",
-  "description": "An array-like data structure designed for ultra fast full-text searching",
+  "description": "A Set-like data structure designed for ultra fast full-text searching",
   "main": "index.js",
   "typings": "./index.d.ts",
   "scripts": {
     "test": "node bench/bench.js"
   },
   "keywords": [
-    "stringbase",
+    "ftset",
+    "fts",
     "string",
-    "database",
     "store",
     "storage",
+    "data",
     "structure",
     "array",
     "set",

@@ -1,6 +1,6 @@
 "use strict";
 
-class Stringbase {
+class FTSet {
 	constructor(_string = "", _delimiter = "\u0004") {
 		let string = _string;
 		if(typeof _delimiter !== "string") {
@@ -10,12 +10,12 @@ class Stringbase {
 			// no-op
 		} else if(Array.isArray(string)) {
 			string = string.join(_delimiter);
-		} else if(string instanceof Stringbase) {
+		} else if(string instanceof FTSet) {
 			string = string._data;
 		} else if(typeof string[Symbol.iterator] === "function") {
 			string = Array.from(string).join(_delimiter);
 		} else {
-			throw new Error("Data must be a String, an Array, an instance of Stringbase or an Iterable");
+			throw new Error("Data must be a String, an Array, an instance of FTSet or an Iterable");
 		}
 		Object.defineProperty(this, "_data", {
 			value: string,
@@ -254,7 +254,7 @@ class Stringbase {
 		if(Array.isArray(input)) {
 			this._data += delim + input.join(delim);
 			this._size += input.length;
-		} else if(input instanceof Stringbase) {
+		} else if(input instanceof FTSet) {
 			this._data += delim + (input._delimiter === delim ? input._data : input._data.split(input._delimiter).join(delim));
 			this._size += input.size;
 		} else if(typeof input === "string") {
@@ -265,9 +265,12 @@ class Stringbase {
 			this._data += arr.join(delim);
 			this._size += arr.length;
 		} else {
-			throw new Error("Input must be one of Array, Stringbase, String, Iterable");
+			throw new Error("Input must be one of Array, FTSet, String, Iterable");
 		}
 		return this;
+	}
+	clone() {
+		return new FTSet(this._data, this._delimiter);
 	}
 	forEach(fn) {
 		const size = this._size;
@@ -301,7 +304,7 @@ class Stringbase {
 				index = a + delim.length;
 			}
 		}
-		return new Stringbase(string, delim);
+		return new FTSet(string, delim);
 	}
 	cursor(str = "") {
 		if(typeof str !== "string") { throw new Error("Argument must be a string"); }
@@ -437,6 +440,6 @@ class Stringbase {
 	}
 }
 
-module.exports = Stringbase;
-module.exports.Stringbase = Stringbase;
-module.exports.default = Stringbase;
+module.exports = FTSet;
+module.exports.FTSet = FTSet;
+module.exports.default = FTSet;
