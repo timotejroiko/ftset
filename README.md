@@ -370,16 +370,19 @@ result = fts.find("Eris");
 console.log(performance.now() - time, result);
 // => 0.39865487397210759 136199  Eris
 
+// write some data
 fts.push("abc");
 
-let time = performance.now();
-let result = fts.find("Eris");
+time = performance.now();
+result = fts.find("Eris");
 console.log(performance.now() - time, result);
 // => 6.963500022888184 136199  Eris
-// => still faster than array.find()
+// first read up to 20x slower due to lazy concatenation
+// generally should still faster than array.find()
 
-let time = performance.now();
-let result = fts.find("Eris");
+time = performance.now();
+result = fts.find("Eris");
 console.log(performance.now() - time, result);
 // => 0.38657467654108987 136199  Eris
+// performance is back to normal from second read onwards until the next write
 ```
