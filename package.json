@@ -1,35 +1,35 @@
 {
-  "name": "ftset",
-  "version": "1.0.0",
-  "description": "A Set-like data structure designed for ultra fast full-text searching",
-  "main": "index.js",
-  "typings": "./index.d.ts",
-  "scripts": {
-    "test": "node bench/bench.js"
-  },
-  "keywords": [
-    "ftset",
-    "fts",
-    "string",
-    "store",
-    "storage",
-    "data",
-    "structure",
-    "array",
-    "set",
-    "full",
-    "text",
-    "search",
-    "match",
-    "regex"
-  ],
-  "author": "Timotej Valentin Rojko",
-  "funding": {
+	"name": "ftset",
+	"version": "1.0.0",
+	"description": "A Set-like data structure designed for ultra fast full-text searching",
+	"main": "index.js",
+	"typings": "./index.d.ts",
+	"scripts": {
+		"test": "node bench/bench.js"
+	},
+	"keywords": [
+		"ftset",
+		"fts",
+		"string",
+		"store",
+		"storage",
+		"data",
+		"structure",
+		"array",
+		"set",
+		"full",
+		"text",
+		"search",
+		"match",
+		"regex"
+	],
+	"author": "Timotej Valentin Rojko",
+	"funding": {
 		"type": "patreon",
 		"url": "https://patreon.com/timotejroiko"
 	},
-  "license": "MIT",
-  "devDependencies": {
-    "eslint": "^7.16.0"
-  }
+	"license": "MIT",
+	"devDependencies": {
+		"eslint": "^7.16.0"
+	}
 }
