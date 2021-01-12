@@ -4,7 +4,7 @@ class FTSet {
 	constructor(_string = "", _delimiter = "\u0004") {
 		let string = _string;
 		if(typeof _delimiter !== "string") {
-			throw new Error("Delimiter must be a string");
+			throw new Error("Delimiter must be a non-empty string");
 		}
 		if(typeof string === "string") {
 			// no-op
@@ -15,7 +15,7 @@ class FTSet {
 		} else if(typeof string[Symbol.iterator] === "function") {
 			string = Array.from(string).join(_delimiter);
 		} else {
-			throw new Error("Data must be a String, an Array, an instance of FTSet or an Iterable");
+			throw new Error("Data must be one of String, Array, FTSet, Iterable");
 		}
 		Object.defineProperty(this, "_data", {
 			value: string,
@@ -32,28 +32,20 @@ class FTSet {
 			enumerable: false,
 			writable: true
 		});
-		const data = this._data;
-		const delim = this._delimiter;
 		if(this._size) {
-			if(data.indexOf(delim + delim) > -1) {
+			const delim = this._delimiter;
+			if(this._data.indexOf(delim + delim) > -1) {
 				const reg = new RegExp(`${delim}+`);
-				this._data = data.split(reg).join(delim);
+				this._data = this._data.split(reg).join(delim);
 			}
-			if(data.indexOf(this._delimiter) === 0) {
-				this._data = data.slice(delim.length);
+			if(this._data.indexOf(this._delimiter) === 0) {
+				this._data = this._data.slice(delim.length);
 			}
-			if(data.lastIndexOf(delim) === data.length - 1) {
-				this._data = data.slice(0, data.length - 1);
+			if(this._data.lastIndexOf(delim) === this._data.length - 1) {
+				this._data = this._data.slice(0, this._data.length - 1);
 			}
-			let n;
-			for(;;) {
-				n = data.indexOf(delim, n);
-				if(n > -1) {
-					this._size++;
-					n += delim.length;
-				} else {
-					break;
-				}
+			for(let n = this._data.indexOf(delim, 0); n > -1; n = this._data.indexOf(delim, n + delim.length)) {
+				this._size++;
 			}
 		}
 	}
@@ -98,7 +90,6 @@ class FTSet {
 		const delim = this._delimiter;
 		const size = this._size;
 		const { length } = this._data;
-		let i;
 		if(size === 1 && data === str) {
 			this._data = "";
 			return true;
@@ -111,6 +102,7 @@ class FTSet {
 			this._data = data.slice(0, length - delim.length - str.length);
 			return true;
 		}
+		let i;
 		if((i = data.indexOf(delim + str + delim)) > -1) {
 			this._data = data.slice(0, i) + data.slice(i + delim.length + str.length);
 			return true;
@@ -144,28 +136,23 @@ class FTSet {
 	findAll(str) {
 		if(typeof str !== "string" || !str) { throw new Error("Argument must be a non-empty string"); }
 		const array = [];
-		let index = 0;
 		const data = this._data;
 		const delim = this._delimiter;
-		for(;;) {
-			let a1 = data.indexOf(str, index);
-			if(a1 === -1) { break; }
-			let a2 = data.indexOf(delim, a1);
-			if(a2 === -1) { a2 = void 0; }
-			a1 = data.lastIndexOf(delim, a1 - 1) + delim.length;
-			array.push(data.slice(a1, a2));
-			if(!a2) {
-				break;
+		for(let a = data.indexOf(str, 0), lastIndex = 0; a > -1; a = data.indexOf(str, lastIndex)) {
+			const a1 = data.lastIndexOf(delim, a - 1) + delim.length;
+			const a2 = data.indexOf(delim, a);
+			if(a2 > -1) {
+				array.push(data.slice(a1, a2));
+				lastIndex = a2 + delim.length;
 			} else {
-				index = a2 + delim.length;
+				array.push(data.slice(a1));
+				break;
 			}
 		}
 		return array;
 	}
 	match(reg) {
-		if(!(reg instanceof RegExp)) { throw new Error("Argument must be a regular expression"); }
-		const data = this._data;
-		const delim = this._delimiter;
+		if(!reg || !(reg instanceof RegExp || reg.constructor.name === "RegExp")) { throw new Error("Argument must be a regular expression"); }
 		let { flags } = reg;
 		if(reg.global) {
 			flags = flags.replace("g", "");
@@ -174,8 +161,10 @@ class FTSet {
 			flags = flags.replace("y", "");
 		}
 		const regExp = new RegExp(reg.source, flags);
+		const data = this._data;
+		const delim = this._delimiter;
 		let a1 = data.match(regExp);
-		if(!a1) { return null; }
+		if(!a1 || !a1[0]) { return null; }
 		a1 = a1.index;
 		let a2 = data.indexOf(delim, a1);
 		if(a2 === -1) { a2 = void 0; }
@@ -183,11 +172,7 @@ class FTSet {
 		return data.slice(a1, a2);
 	}
 	matchAll(reg) {
-		if(!(reg instanceof RegExp)) { throw new Error("Argument must be a regular expression"); }
-		const array = [];
-		let result;
-		const data = this._data;
-		const delim = this._delimiter;
+		if(!reg || !(reg instanceof RegExp || reg.constructor.name === "RegExp")) { throw new Error("Argument must be a regular expression"); }
 		let { flags } = reg;
 		if(!reg.global) {
 			flags += "g";
@@ -196,13 +181,19 @@ class FTSet {
 			flags = flags.replace("y", "");
 		}
 		const regExp = new RegExp(reg.source, flags);
-		while((result = regExp.exec(data))) {
-			let a1 = result.index;
-			let a2 = data.indexOf(delim, a1);
-			if(a2 === -1) { a2 = void 0; }
-			a1 = data.lastIndexOf(delim, a1 - 1) + delim.length;
-			array.push(data.slice(a1, a2));
-			reg.lastIndex = a2 + delim.length;
+		const data = this._data;
+		const delim = this._delimiter;
+		const array = [];
+		for(let result = regExp.exec(data); result && result[0]; result = regExp.exec(data)) {
+			const a1 = data.lastIndexOf(delim, result.index - 1) + delim.length;
+			const a2 = data.indexOf(delim, result.index);
+			if(a2 > -1) {
+				array.push(data.slice(a1, a2));
+				regExp.lastIndex = a2 + delim.length;
+			} else {
+				array.push(data.slice(a1));
+				break;
+			}
 		}
 		return array;
 	}
@@ -265,7 +256,7 @@ class FTSet {
 			this._data += arr.join(delim);
 			this._size += arr.length;
 		} else {
-			throw new Error("Input must be one of Array, FTSet, String, Iterable");
+			throw new Error("Argument must be one of Array, FTSet, String, Iterable");
 		}
 		return this;
 	}
@@ -293,9 +284,7 @@ class FTSet {
 		const data = this._data;
 		const delim = this._delimiter;
 		let string = "";
-		let a = 0;
-		let index = 0;
-		for(let i = 0; i < size; i++) {
+		for(let i = 0, a = 0, index = 0; i < size; i++) {
 			a = data.indexOf(delim, index);
 			if(a === -1) {
 				string += fn(data.slice(index));
@@ -310,12 +299,7 @@ class FTSet {
 		if(typeof str !== "string") { throw new Error("Argument must be a string"); }
 		const data = this._data;
 		const delim = this._delimiter;
-		let index = data.indexOf(str);
-		if(index === -1) {
-			index = 0;
-		} else {
-			index = data.lastIndexOf(delim, index - 1) + delim.length;
-		}
+		let index = data.indexOf(str) === -1 ? 0 : data.lastIndexOf(delim, index - 1) + delim.length;
 		let x = data.indexOf(delim, index);
 		if(x === -1) { x = void 0; }
 		let curr = data.slice(index, x);
