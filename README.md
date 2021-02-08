@@ -1,18 +1,22 @@
 # FTSet
 
-FTSet is an array-like data structure comparable to the javascript `Set` object but designed exclusively for storing strings and providing ultra fast full-text searching.
+FTSet, or Full Text Set, is an array-like data structure comparable to the javascript `Set` object but designed exclusively for storing strings and providing ultra fast full-text searching.
 
-## FTSet VS Set VS Array
+## FTSet comparison with Set and Array
 
-Just like a Set, FTSet is a non-indexed datastore, it only stores values and not indexes, but it also implements some features from Arrays which makes it much more flexible than a Set. However, unlike a Set, FTSet does not automatically prevent duplicate items for performance reasons. If one needs to prevent duplicates, they should always call `.has()` before inserting new data.
+* Like a Set, FTSet is a non-indexed datastore, it only stores values and not indexes
+* Like an Array, the values are ordered by insertion in a single contiguous block and transversible from both ends
+* Unlike an Array, operating on the beginning of the block (shift/unshift) is faster than operating on the end (push/pop)
+* Unlike a Set, values are not hashed and FTSet does not prevent duplicate items for performance reasons
+* FTSet implements several features from both the Set and the Array API, making it very flexible
 
-FTSet is something in between a Set and an Array, it is 100% compatible with the Set API but with a few additional methods borrowed from Arrays.
+FTSet is something in between a Set and an Array, it is 100% compatible with the Set API and most of the Array API.
 
 ## Why?
 
-Recently i found out that searching for lines that include a specific string using linux's native `grep` command on a text file is much faster than doing the same thing with the entire file loaded in memory as an array of lines, which essentially makes caching this kind of data not only useless but it actually made my entire application slower.
+Recently i found out that matching lines using linux's native `grep` command on a text file is much faster than doing the same thing with the entire file loaded in memory as an array of lines, which essentially makes caching this kind of data not only useless but it actually made my entire application slower.
 
-FTSet provides fast string matching features by storing its entire dataset as a single contiguous string. This makes the process of finding items by string matching and by regex patterns an order of magnitude faster than looping over arrays, sort of like an in-memory grep.
+FTSet provides fast string matching features by storing its entire dataset as a single contiguous string block which makes the process of string matching an order of magnitude faster than looping over arrays, like an in-memory grep.
 
 FTSet excels at storing a large number of strings with the purpose of quickly searching through them but may not be indicated for heavy read/write usage, check the benchmarks at the end of this readme.
 
@@ -307,7 +311,7 @@ FTSet implements the `Iterable` and `Iterator` protocols so you can loop or iter
 
 Sample test run using the script in `bench/bench.js` on Node.js 15.3.0. Your milleage may vary depending on your CPU, your node.js version and several other factors so you are advised to perform your own tests.
 
-Insert operations are surprisingly on pair with arrays, except for array.unshift which is absolutely terrible with a large number of items. Arrays are not designed for adding items to the beginning because the entire array needs to be reindexed, FTSet on the other hand has no problems with it. Sets cant add to the beginning and are slower because they check for value uniqueness on every insert.
+Insert operations are surprisingly on pair with arrays, except for array.unshift which is absolutely terrible with a large number of items. Arrays are not designed for adding items to the beginning because the entire array needs to be reindexed, FTSet on the other hand has no problems with it. Sets are unordered and are slower because all items are hashed to check for uniqueness on every insert.
 
 || 99999 x 10 char | 9999 x 1000 char |
 |-|-|-|
@@ -328,20 +332,20 @@ Search operations are what FTSet is designed for, delivering much faster perform
 | array + Math.random | 0.046 | 0.009 |
 | set + Array.from + Math.random | 0.681 | 0.051 |
 | FTSet.random() | 0.078 | 0.009 |
-| array.filter(includes) | 7.693 | 4.573 |
+| array.filter(includes) | 6.594 | 4.273 |
 | FTSet.findAll() | 0.367 | 3.142 |
-| array.filter(regex) | 11.327 | 8.152 |
-| FTSet.matchAll() | 0.943 | 7.965 |
+| array.filter(regex) | 6.615 | 8.152 |
+| FTSet.matchAll() | 0.943 | 7.665 |
 
 Delete operations have mixed results, with Sets being the fastest at deleting, Arrays at popping and FTSet at shifting.
 
 || 99999 x 10 char | 9999 x 1000 char |
 |-|-|-|
-| array.splice() | 0.344 | 0.083 |
+| array.splice() | 0.344 | 0.787 |
 | set.delete() | 0.051 | 0.006 |
-| FTSet.delete() | 0.368 | 2.810 |
+| FTSet.delete() | 0.188 | 0.365 |
 | array.pop() | 3.361 | 2.282 |
-| FTSet.pop() | 13.276 | 18.775 |
+| FTSet.pop() | 13.276 | 17.775 |
 | array.shift() | 5133.597 | 3.788 |
 | FTSet.shift() | 8.616 | 3.083 |
 

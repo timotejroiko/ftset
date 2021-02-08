@@ -1,3 +1,15 @@
+/**
+ * ## FTSet
+ * A string-based datastore designed for ultra fast full-text queries  
+ * 
+ * [FTSet on Github](https://github.com/timotejroiko/ftset)  
+ * [FTSet on NPM](https://npmjs.com/package/ftset)  
+ * ```js
+ * const FTSet = require("ftset");
+ * // or import { FTSet } from "ftset"
+ * const fts = new FTSet();
+ * ```
+ */
 declare module 'ftset' {
 	
 	/**
@@ -32,10 +44,10 @@ declare module 'ftset' {
 	
 	/**
 	* ## FTSet
-	* ### A string-based datastore designed for ultra fast full-text queries.
-	* @class
-	* @example
-	* const FTSet = require("FTSet");
+	* A string-based datastore designed for ultra fast full-text queries
+	* ### Examples
+	* ```js
+	* const FTSet = require("ftset"); // or import { FTSet } from "ftset"
 	* const fts = new FTSet();
 	* fts.push("some data");
 	* fts.push("ex dee");
@@ -46,6 +58,7 @@ declare module 'ftset' {
 	*     console.log(item) // "some data", "ex dee", ...
 	* }
 	* fts.clear();
+	* ```
 	*/
 	export class FTSet implements Iterable<string> {
 		[Symbol.iterator](): Iterator<string>;

@@ -92,17 +92,17 @@ for(const test of tests) {
 	z = array[Math.floor(Math.random() * array.length)];
 	time(() => {
 		array.splice(array.indexOf(z), 1);
-	}, "[array] deleted an item");
+	}, "[array] deleted a random item");
 	// /////////////////////
 	z = Array.from(set)[Math.floor(Math.random() * array.length)];
 	time(() => {
 		set.delete(z);
-	}, "[set] deleted an item");
+	}, "[set] deleted a random item");
 	// /////////////////////
 	z = sb.random();
 	time(() => {
 		sb.delete(z);
-	}, "[ftset] deleted an item");
+	}, "[ftset] deleted a random item");
 	// /////////////////////
 	time(() => {
 		for(let i = 0; i < test.items - 1; i++) {
