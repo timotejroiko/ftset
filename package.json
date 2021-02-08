@@ -1,6 +1,6 @@
 {
 	"name": "ftset",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "A Set-like data structure designed for ultra fast full-text searching",
 	"main": "index.js",
 	"typings": "./index.d.ts",
